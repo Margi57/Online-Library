@@ -1,0 +1,139 @@
+<?php
+include "db_connect.php";
+session_start();
+
+if(isset($_GET['cartid']))
+{
+   $cartid= $_GET['cartid'];
+
+   $sql = "delete from carttb where cartID=".$cartid."";
+   $r = mysqli_query($conn,$sql);
+
+   header('location:profile.php');
+   exit;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Library Management System</title>
+  <link rel="stylesheet" href="new.css">
+<style>
+  table{
+    position: absolute;
+    top:50px;
+
+  }
+  #t1{
+        margin: 40px;
+        padding: 20px;
+        padding:right;
+        }
+        table,tr{
+        border-collapse: collapse;
+        width: 30%;
+        margin-top: 100px;
+        margin-left: 20px;
+        box-shadow: 0px 10px 15px #ccc;}
+        #t1 td{
+        padding: 30px;
+        font-size: 20px;
+        }
+</style>
+</head>
+
+
+<body>
+  <header>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <div class="logo">
+      <img src="im/logo.jfif" alt="Library Logo">
+      <span>Library Management System</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="books.php">Books</a></li>
+        <li><a href="profile.php">Profile</a></li>
+        <li><a href="logout.php">logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="profile-section">
+    <h2>Profile</h2>
+    <div class="user-profile">
+        
+           
+
+      <!-- <h3>John Doe</h3>
+      <p>Email: john.doe@example.com</p>
+      <p>Phone: +1 1234567890</p>
+      <p>Role: Student</p> -->
+
+      <?php 
+      $userid = $_SESSION['userid'];
+
+          $sql = "select * from usertb where userID=".$userid."";
+          $r = mysqli_query($conn,$sql);
+
+          while($row = mysqli_fetch_assoc($r))
+          {
+            echo'
+            <h3>'.$row['username'].'</h3>
+            <p>'.$row['email'].'</p>
+            <p>'.$row['phoneno'].'</p>
+            ';
+          }
+      ?>
+    </div>
+  </section>
+<div>
+<table>
+
+    <thead>
+                <tr>
+                <th> No </th>
+                <th>book</th>
+                <th>authore</th>
+                <th>Issue Date</th>
+                <th></th>
+                </tr>
+      </thead>
+      <tbody>
+        <?php 
+        $userid = $_SESSION['userid'];
+        $sql = "select * from carttb where userID=".$userid."";
+        $r = mysqli_query($conn,$sql);
+        $count = 1;
+        while($row = mysqli_fetch_assoc($r))
+        {
+          echo'
+          <tr>
+             <td> '.$count++.'</td>
+             <td> '.$row['bookname'].' </td>
+             <td> '.$row['author'].'</td>
+             <td> '.$row['date'].'</td>
+             <td><a href="profile.php?cartid='.$row['cartID'].'"><button type="button" class="btnDelete"> Delete </button></a></td>
+          </tr>
+          ';
+        }
+        ?>
+      </tbody>
+</table>
+</div>
+  <footer>
+    <p>&copy; 2023 Library Management System. All rights reserved.</p>
+  </footer>
+  <script>
+      $(document).ready(function(){
+        $(".btnDelete").on('click',function(){
+          alert('Book Deleted Successfully');
+        })
+      })
+    </script>
+</body>
+</html>
